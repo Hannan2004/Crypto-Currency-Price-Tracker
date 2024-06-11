@@ -9,5 +9,14 @@ from dateutil.relativedelta import relativedelta
 st.title('Crypto Currency Tracker')
 
 # Sidebar
-st.sidebar.title('options')
-st.sidebar.selectbox('Select a crypto currency', ['BTC-USD', 'ETH-USD', 'LTC-USD'])
+st.sidebar.title('Options')
+crypto_mapping = st.sidebar.selectbox('Select a crypto currency', ['BTC-USD', 'ETH-USD', 'LTC-USD'])
+start_date = st.sidebar.date_input('Start date', date.today() - relativedelta(months=1))
+end_date = st.sidebar.date_input('End date', date.today())
+st.sidebar.selectbox("Select a time period", ["1 day", "5 days", "1 month", "3 months", "6 months"])
+selected_value = st.sidebar.selectbox("Select a value to display", ["Open", "High", "Low", "Close", "Volume"])
+
+if st.sidebar.button('Track crypto currency'):
+    crypto_hystory = yf.download(crypto_mapping, start=start_date, end=end_date)
+    fig = px.line(crypto_hystory, x=crypto_hystory.index, y=selected_value, title=f"{crypto_mapping} {selected_value} price")
+    st.plotly_chart(fig)
